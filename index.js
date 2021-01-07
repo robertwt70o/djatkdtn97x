@@ -17,8 +17,12 @@ application.post('/register', (request, response) => {
     let name = request.body.name;
     let email = request.body.email;
     let password = request.body.password;
-    api.addCustomer(name, email, password);
-    response.json({message: 'The customer added successfully'});
+    let alreadyExist = api.addCustomer(name, email, password);
+    if(alreadyExist) {
+        response.status(403).json({message: 'A Customer with the same email already exists.'});
+    } else {
+        response.json({message: 'The customer added successfully'});
+    }
 });
 
 
