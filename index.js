@@ -1,9 +1,11 @@
 const { request, response } = require('express');
 const express = require('express');
+const cors = require('cors');
 const api = require('./api');
 
 const application = express();
 const port = process.env.PORT || 4002;
+application.use(cors());
 
 application.use(express.json());
 
