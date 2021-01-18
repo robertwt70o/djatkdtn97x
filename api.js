@@ -8,6 +8,10 @@ let getCustomers = () => {
     return customers;
 };
 
+let getFlowers = () => {
+    return flowers;
+};
+
 let addCustomer = (name, email, password) => {
     let alreadyExist = customers.find(x => x.email.toLowerCase() === email.toLowerCase());
     if(alreadyExist) {
@@ -20,3 +24,4 @@ let addCustomer = (name, email, password) => {
 exports.add = add;
 exports.addCustomer = addCustomer;
 exports.getCustomers = getCustomers;
+exports.getFlowers = getFlowers;
