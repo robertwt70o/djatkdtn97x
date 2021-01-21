@@ -21,10 +21,6 @@ application.get('/customers', (request, response) => {
     response.json(api.getCustomers());
 });
 
-application.get('/flowers', (request, response) => {
-    response.json(api.getFlowers());
-});
-
 application.post('/register', (request, response) => {
     let name = request.body.name;
     let email = request.body.email;
