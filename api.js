@@ -8,7 +8,6 @@ let getCustomers = () => {
     return customers;
 };
 
-
 let addCustomer = (name, email, password) => {
     let alreadyExist = customers.find(x => x.email.toLowerCase() === email.toLowerCase());
     if(alreadyExist) {
