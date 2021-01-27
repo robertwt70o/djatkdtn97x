@@ -26,12 +26,58 @@ application.post('/register', (request, response) => {
     let email = request.body.email;
     let password = request.body.password;
     let alreadyExist = api.addCustomer(name, email, password);
-    if(alreadyExist) {
-        response.status(403).json({message: 'A Customer with the same email already exists.'});
+    if (alreadyExist) {
+        response.status(403).json({ message: 'A Customer with the same email already exists.' });
     } else {
-        response.json({message: 'The customer added successfully'});
+        response.json({ message: 'The customer added successfully' });
     }
 });
+
+application.post('/login', (request, response) =>{
+    let name = request.body.name;
+    let email = request.body.email;
+    let password = request.body.password;
+    if(api.checkCustomer(email,password)==1){
+        response.send(JSON. stringify({"isvalid":true,"message":"customer exist"}));
+    }
+    else{
+        response.send(JSON. stringify({"isvalid":false,"message":"customer not exist"}));
+    }
+
+});
+application.get('/flowers', (request, response) =>{
+    let flowerL = api.getFlowers();
+    response.send(JSON. stringify(flowerL));
+});
+application.get('/quizzes', (request, response) =>{
+    let quizs = api.getQuizs();
+    response.send(JSON. stringify(quizs));
+});
+
+application.get('/quiz/:id', (request, response) =>{
+    let quiz = api.getQuizById(request.params.id);
+    response.send(JSON. stringify(quiz));
+});
+
+
+
+application.post('/score', (request, response) =>{
+    let quizTaker = request.body.quizTaker;
+    let quizId = request.body.quizId;
+    let score = request.body.score;
+    //let date = request.body.date;
+    api.addScore(quizTaker,quizId,score);
+    response.send(JSON. stringify({"message":"update successful"}));
+});
+
+application.get('/scores/:quiztaker/:quizid', (request, response) =>{
+    let quiztaker = request.body.quiztaker;
+    let quizid = request.body.quizid;
+    let scoreOfquiz = api.checkScore(quiztaker,quizid);
+    response.send(JSON. stringify(scoreOfquiz));
+});
+
+
 
 
 
