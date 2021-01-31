@@ -37,7 +37,7 @@ application.post('/login', (request, response) =>{
     let name = request.body.name;
     let email = request.body.email;
     let password = request.body.password;
-    if(api.checkCustomer(email,password)==1){
+    if(api.addCustomer(email,password)==1){
         response.send(JSON. stringify({"isvalid":true,"message":"customer exist"}));
     }
     else{
