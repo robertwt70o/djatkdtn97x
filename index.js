@@ -21,15 +21,16 @@ application.get('/customers', (request, response) => {
     response.json(api.getCustomers());
 });
 
-application.post('/register', (request, response) => {
+application.post('/register', (request, response) =>{
     let name = request.body.name;
     let email = request.body.email;
     let password = request.body.password;
-    let alreadyExist = api.addCustomer(name, email, password);
-    if (alreadyExist) {
-        response.status(403).json({ message: 'A Customer with the same email already exists.' });
-    } else {
-        response.json({ message: 'The customer added successfully' });
+    if(api.checkCustomer(email,password)==0){
+        response.sendStatus(403);
+    }
+    else{
+        let sum = api.addCustomer(name,email,password);
+        response.sendStatus(200);
     }
 });
 

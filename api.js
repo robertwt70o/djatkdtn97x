@@ -7,18 +7,22 @@ let add = (n, m) => {
     return n + m;
 };
 
-let getCustomers = () => {
-    return customers;
-};
-
-let addCustomer = (name, email, password) => {
-    let alreadyExist = customers.find(x => x.email.toLowerCase() === email.toLowerCase());
-    if(alreadyExist) {
-        return true;
+let checkCustomer = (email, password) => {
+    for (var i = 0; i < customers.length; i++) {
+        if(customers[i].email == email){
+            console.log(email);
+            if(customers[i].password != password){
+                return 2;
+            }
+            return 1;
+        }
     }
-    customers.push({id: customers.length + 1, name: name, email: email, password: password});
-    return false;
-};
+    return 0;
+}
+
+let addCustomer = (name,email, password) => {
+    customers.push({name,email, password});
+}
 
 let getFlowers = () => {
     let flowerL=[];
@@ -60,7 +64,7 @@ let checkScore = (quiztaker,quizid) => {
 
 exports.add = add;
 exports.addCustomer = addCustomer;
-exports.getCustomers = getCustomers;
+exports.checkCustomer = checkCustomer;
 exports.getFlowers = getFlowers;
 exports.getQuizs = getQuizs;
 exports.getQuizById = getQuizById;
