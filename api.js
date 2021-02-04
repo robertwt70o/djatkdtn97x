@@ -1,11 +1,11 @@
 var { customers } = require('./data_tier/customers');
-var {flowers} = require('./data_tier/flowers');
-var {quizzes} = require('./data_tier/data');
-var {scores} = require('./data_tier/scores');
+var { flowers } = require('./data_tier/flowers');
+var { quizzes } = require('./data_tier/data');
+var { scores } = require('./data_tier/scores');
 
-let add = (n, m) => {
-    return n + m;
-};
+let add = (n,m) => {
+    return n+m;
+}
 
 let checkCustomer = (email, password) => {
     for (var i = 0; i < customers.length; i++) {
@@ -23,6 +23,7 @@ let checkCustomer = (email, password) => {
 let addCustomer = (name,email, password) => {
     customers.push({name,email, password});
 }
+
 
 let getFlowers = () => {
     let flowerL=[];

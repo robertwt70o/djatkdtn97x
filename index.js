@@ -1,24 +1,24 @@
-const { request, response } = require('express');
-const express = require('express');
-const cors = require('cors');
 const api = require('./api');
+const express = require('express');      
+const application= express();
+const port = process.env.PORT || 4002;      
 
-const application = express();
-const port = process.env.PORT || 4002;
-application.use(cors());
+application.use(express.json())
+application.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+ })
 
-application.use(express.json());
-
-
-application.get('/add/:n/:m', (request, response) => {
-    let n = Number(request.params.n);
-    let m = Number(request.params.m);
-    let sum = api.add(n, m);
-    response.send(`${n} + ${m} = ${sum}.`);
+application.get('/add', (request, response) =>{
+    response.send('The add request resived');
 });
 
-application.get('/customers', (request, response) => {
-    response.json(api.getCustomers());
+application.get('/add2/:n/:m', (request, response) =>{
+    let n = Number(request.params.n);
+    let m = Number(request.params.m);
+    let sum = api.add(n,m);
+    response.send(`${n} + ${m} = ${sum}`);
 });
 
 application.post('/register', (request, response) =>{
@@ -31,6 +31,8 @@ application.post('/register', (request, response) =>{
     else{
         let sum = api.addCustomer(name,email,password);
         response.sendStatus(200);
+        //response.send(JSON.stringify(`customer added ${name}`));
+        //response.send(JSON.stringify(`customer added ${name}`));
     }
 });
 
@@ -38,7 +40,7 @@ application.post('/login', (request, response) =>{
     let name = request.body.name;
     let email = request.body.email;
     let password = request.body.password;
-    if(api.addCustomer(email,password)==1){
+    if(api.checkCustomer(email,password)==1){
         response.send(JSON. stringify({"isvalid":true,"message":"customer exist"}));
     }
     else{
@@ -78,8 +80,4 @@ application.get('/scores/:quiztaker/:quizid', (request, response) =>{
     response.send(JSON. stringify(scoreOfquiz));
 });
 
-
-
-
-
-application.listen(port, () => console.log('Listening on port ' + port));
+application. listen(port, () => console.log('The application is listening to '+port))
