@@ -1,130 +1,76 @@
-const express = require("express");
-const api = require("./api");
-const cors = require("cors");
+const express = require('express');
+const api = require('./api');
+const { scores } = require('./data_tier/scores');
 
-const app = express();
+const application = express();
 const port = process.env.PORT || 4002;
 
-app.use(express.json());
-app.use(cors());
+application.use(express.json());
 
-app.post("/register", (request, response) => {
-  let name = request.body.name;
-  let email = request.body.email;
-  let password = String(request.body.password);
-
-  api
-    .addCustomer(name, email, password)
-    .then((x) => response.json({ message: "Customer added." }))
-    .catch((e) => {
-      console.log(e);
-      response.status(403).json({ message: "Customer already exists." });
-    });
+application.get('/add/:n/:m', (request, response) => {
+    let n = Number(request.params.n);
+    let m = Number(request.params.m);
+    let sum = api.add(n, m);
+    response.send(`${n} + ${m} = ${sum}`);
 });
 
-app.post("/login", async (req, res) => {
-  let email = req.body.email;
-  let password = String(req.body.password);
-  let validLogin = await api.login(email, password);
-  if (validLogin) {
-    res.json({ message: "User logged in succesfully.", isvalid: true });
-  } else {
-    res.json({ message: "username/password invalid.", isvalid: false });
-  }
+application.get('/sub/:n/:m', (request, response) => {
+    let n = Number(request.params.n);
+    let m = Number(request.params.m);
+    let sum = api.sub(n, m);
+    response.send(`${n} - ${m} = ${sum}`);
 });
 
-app.get("/flowers", (req, res) => {
-  api.getFlowers().then((x) => res.json(x));
+application.post('/register', (request, response) => {
+    let name = request.body.name;
+    let email = request.body.email;
+    let password = request.body.password;
+    let alreadyExists = api.addCustomer(name, email, password);
+    if(alreadyExists) {
+        response.status(403).json({message: 'A customer with the same email already exists'});
+    } else {
+        response.json({message: 'The customer was added.'});
+    }
 });
 
-app.post("/flowers", (req, res) => {
-  let name = req.body.name;
-  let picture = req.body.picture;
-  api.setFlower(name, picture).then((x) => res.json(x));
+application.post('/login', (request, response) => {
+    let email = request.body.email;
+    let password = request.body.password;
+    let isValid = api.customerLogin(email, password);
+    if(isValid) {
+        response.json({message: 'Login successful'});
+    } else {
+        response.status(404).json({message: 'User not found'});
+    }
 });
 
-app.get("/quizzes", async (req, res) => {
-  let quizzes = await api.getQuizzes();
-  res.json(quizzes);
+application.get('/flowers', (request, response) => {
+    let flowerName = api.getFlowers();
+    response.send(JSON. stringify(flowerName));
 });
 
-app.get("/quizzes/:id", async (req, res) => {
-  let id = req.params.id;
-  let quiz = await api.getQuiz(id);
-  if (quiz.length === 0) {
-    res.json({ message: "Invalid id." });
-  } else {
-    res.json(quiz);
-  }
+application.get('/quizzes', (request, response) => {
+    let quizQuestions = api.getQuizzes();
+    response.send(JSON. stringify(quizQuestions));
 });
 
-app.post("/quizzes", (req, res) => {
-  let name = req.body.name;
-  let category = req.body.category;
-  api.addQuiz(name, category).then((x) => res.json(x));
+application.get('/quiz/:id', (request, response) => {
+    let quizID = api.getQuizID(request.params.id);
+    response.send(JSON. stringify(quizID));
 });
 
-app.get("/scores", async (req, res) => {
-  let scores = await api.getScores();
-  res.json(scores);
+application.post('/score', (request, response) => {
+    api.addScore(request.body.quizTaker, request.body.quizID, request.body.score);
+    response.send(JSON. stringify({message: "Score was added"}));
 });
 
-app.get("/scores/:quiztaker/:quizid", (req, res) => {
-  let email = req.params.quiztaker;
-  let id = Number(req.params.quizid);
-
-  let scores = api.getScore(email, id);
-
-  res.json(scores);
+application.get('/scores/:quiztaker/:quizid', (request, response) => {
+    let quizScore = api.checkUserScore(request.body.quizTaker, request.body.quizID);
+    if(quizScore == -1) {
+        response.status(404).json({message: 'User not found'});
+    } else {
+        response.send(JSON. stringify(quizScore));
+    }
 });
 
-app.post("/score", async (req, res) => {
-  const quizTaker = req.body.quizTaker;
-  const quizId = Number(req.body.quizId);
-  const score = Number(req.body.score);
-  await api.setScore(quizTaker, quizId, score);
-  res.json({ message: "Score set succesfully" });
-});
-
-app.get("/customers", (req, res) => {
-  api
-    .getCustomers()
-    .then((x) => res.json(x))
-    .catch((e) => {
-      console.log(e);
-      res
-        .status(500)
-        .json({ message: "There was an error in retrieving customers" });
-    });
-});
-
-app.post("/category", (req, res) => {
-  const category = req.body.category;
-  api.addCategory(category);
-  res.json({ message: "Category saved" });
-});
-
-app.get("/category/:category", (req, res) => {
-  const category = req.params.category;
-  const cat = api.getCategory(category).then((x) => res.json(x));
-});
-
-app.get("/question", async (req, res) => {
-  const questions = await api.getQuestions();
-  res.json(questions);
-});
-
-app.get("/question/:id", async (req, res) => {
-  const id = req.params.id;
-  const question = await api.getQuestion(id);
-  res.json(question);
-});
-
-app.post("/question", async (req, res) => {
-  const picture = req.body.picture;
-  const choices = req.body.choices;
-  const answer = req.body.answer;
-  await api.setQuestion(picture, choices, answer);
-  res.json({ message: "Question saved" });
-});
-app.listen(port, () => console.log(`Express started on port ${port}`));
+application.listen(port, () => console.log('Listening on port ' + port));
