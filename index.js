@@ -3,7 +3,7 @@ const api = require('./api');
 const { scores } = require('./data_tier/scores');
 
 const application = express();
-const port = process.env.PORT || 4002;
+const port = process.env.PORT || 7777;
 
 application.use(express.json());
 
