@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 
-const connectionString = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_DATABASE}`;
+const connectionString = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DATABASE}`;
 
 const connection = {
     connectionString: connectionString,
